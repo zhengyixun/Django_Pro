@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/csrf.js"></script>
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+<body>
+<h1 style="color: red">提交到后台</h1>
+<form action="/index/" method="post">
+    {% csrf_token %}
+    <input type="text" name="username" />
+    <input type="text" name="ages" />
+    <input type="password" name="password" />
+    <input type="submit"  value="确定" />
+</form>
+
+<h1>用户展示</h1>
+
+<div id="list_result">上传表格</div>
+<div id="login">Login</div>
+
+<!--上传图片-->
+<div class="upload">
+    上传图片
+       <form enctype="multipart/form-data" action="/upload_file/" method="post">
+            <input type="file" name="myfile" />
+            <br/>
+            <input type="submit" value=" 上传"/>
+       </form>
+    <div id="prog_out" class="progress progress-striped active">
+        <div id="prog_in" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+    </div>
+</div>
+</div>
+
+<script>
+    $(function () {
+
+        //上传文件进度条显示
+
+
+
+        $.ajaxSetup({
+            data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+        });
+        // $.getJSON('/get_list/',function(ret){
+        //     //返回值 ret 在这里是一个列表
+        //     for (var i = ret.length - 1; i >= 0; i--) {
+        //       // 把 ret 的每一项显示在网页上
+        //       $('#list_result').append(' ' + ret[i])
+        //     }
+        //   });
+        $.ajax({
+            url:'/get_list/',
+            method:"post",
+            data:{
+                token:"123"
+            },
+            success(result){
+                if(result.code === '200'){
+                    let data = JSON.parse(result.list);
+                    console.log(data)
+                }
+            }
+        });
+
+
+        $("#list_result").click(()=>{
+            $.ajax({
+                url:'/excel_import/',
+                method:"post",
+                data:{
+                    file_url:'C:/Users/Administrator/Desktop/data.xls',
+                    table_name:'Sheet1',
+                },
+                success(result){
+                    console.log(result)
+                }
+            });
+        })
+
+        //测试登陆的方法
+    $("#login").click(function () {
+            $.ajax({
+                url:'/login/',
+                type:"post",
+                dataType:'json',
+                data:{
+                    name:"admin",
+                    pwd:"1"
+                },
+                success(e){
+                    console.log(e)
+                }
+            });
+    })
+
+    })
+</script>
+</body>
+</html>

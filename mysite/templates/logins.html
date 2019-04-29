@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/public.js"></script>
+</head>
+<body>
+<h1 id="login">登陆</h1>
+</body>
+<script>
+    $(function () {
+        //判断有没有token
+        if(getCookie('token')!=null){
+            location.href = '/index'
+        }
+        // # 登陆
+        $("#login").click(function () {
+            $.ajax({
+                url:'/login/',
+                type:"post",
+                dataType:'json',
+                data:{
+                    name:"admin",
+                    pwd:"1"
+                },
+                success(e){
+                    console.log(e);
+                    SetCookie('token',e.data.token);
+                    //跳转的时候不能写xxx.html
+                    location.href = '/index'
+                }
+            });
+    })
+    })
+</script>
+</html>
